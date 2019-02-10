@@ -12,6 +12,9 @@ type VehicleFactory interface {
 
 func GetVehicle(vehicleType string, registrationNumber string, color string) *Vehicle{
 	switch vehicleType {
-	case "car": return CarFactory{}.CreateVehicle(registrationNumber,color)
+	case "car":
+		carFactory := CarFactory{}
+		return carFactory.CreateVehicle(registrationNumber,color)
 	}
+	return nil
 }

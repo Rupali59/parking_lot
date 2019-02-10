@@ -5,3 +5,27 @@
 #
 # After this is run, bin/parking_lot
 # should Just Work.
+
+#!/usr/bin/env bash
+
+export GOPATH=`pwd`
+require_go="Please install go 1.11 .5 binaries to build"
+
+which go &> /dev/null
+if [ $? -eq 1 ]
+then
+    echo ${require_go}
+    exit 1
+fi;
+
+go version | grep 'go1.11.5' o &> /dev/null
+
+if [ $? -eq 1 ]
+then
+    echo ${require_go}
+    exit 1
+fi;
+
+go test test/*
+go build -o bin/run_parking_lot cmd/main.go
+chmod 755 bin/run_parking_lot

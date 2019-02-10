@@ -1,4 +1,4 @@
-package parking_lot
+package parkingLot
 
 import (
 	"errors"
@@ -8,22 +8,21 @@ import (
 
 var (
 	ErrorCreation             = errors.New("Could not create a parking lot.")
-	ErrorSlotNotFound = errors.New("No slot found with number %d found.")
+	ResponseSlotNotFound = "No slot found with number %d found."
 	ResponseCreatedparkingLot = "Created a parking lot with %d slots."
 )
 
 type ParkingLot struct {
 	Slots    []ParkingSlot;
 	EmptySlots []int;
-	OccupiedSlots []int;
 	Capacity int;
 }
 
-func CreateParkingLot(n int) (parkingLot *ParkingLot, err error, response string) {
+func CreateParkingLot(n int) (parkingLot *ParkingLot, response string, err error) {
 	var slots []ParkingSlot;
 	var slotNumbers []int;
-	for i := 0; i <= n; i++ {
-		slot := NewParkingSlot()
+	for i := 0; i < n; i++ {
+		slot := NewParkingSlot(i)
 		slots = append(slots, *slot);
 		slotNumbers = append(slotNumbers,i)
 	}
@@ -33,21 +32,22 @@ func CreateParkingLot(n int) (parkingLot *ParkingLot, err error, response string
 			Capacity: n,
 			EmptySlots:slotNumbers,
 		};
-		return &parkingLot, nil, fmt.Sprintf(ResponseCreatedparkingLot,n)
+		return &parkingLot, fmt.Sprintf(ResponseCreatedparkingLot,n), nil
+	}else{
+		return nil, "",ErrorCreation
 	}
-	return nil, ErrorCreation, ""
 }
 
 
 func(parkingLot *ParkingLot) GetEmptySlot()(slotNumber int){
 	if(len(parkingLot.EmptySlots)>0){
 		min := parkingLot.Capacity+1
-		for _,i:=range parkingLot.EmptySlots{
-			if(min < i){
-				min = i
+		for i:=0;i<len(parkingLot.EmptySlots);i++{
+			if(parkingLot.EmptySlots[i]<min){
+				min = parkingLot.EmptySlots[i]
 			}
 		}
-		return parkingLot.EmptySlots[min];
+		return min;
 	}
 	return -1
 }
@@ -61,28 +61,32 @@ func(parkingLot *ParkingLot) Leave(slotNumber int) (status bool, err error){
 				return false, err
 			}
 			if(status){
+				parkingLot.Slots[slotNumber]=slot;
 				parkingLot.EmptySlots = append(parkingLot.EmptySlots, slot.SlotNumber)
 				return true,nil
 			}
 		}
 	}
-	return false,ErrorSlotNotFound
+	return false,errors.New(fmt.Sprintf(ResponseSlotNotFound,slotNumber))
 }
 
 func(parkingLot *ParkingLot)Park(slotNumber int,vehicle *vehicle.Vehicle) (status bool, err error){
 	slot := parkingLot.Slots[slotNumber]
 	allotStatus,err := slot.AllotVehicle(vehicle)
+	parkingLot.Slots[slotNumber] = slot
+
 	if(err!=nil){
 		return false,err
 	}
 	if(allotStatus == true){
-		var empty []int
-		for i := range parkingLot.EmptySlots{
-			if(slotNumber != i){
-				empty= append(empty, i)
+		otherSlots := []int{};
+		for _,i:=range parkingLot.EmptySlots{
+			if(i != slotNumber){
+				otherSlots = append(otherSlots, i)
 			}
 		}
-		parkingLot.EmptySlots = empty
+		parkingLot.EmptySlots=otherSlots
 		return true,nil
 	}
+	return false,err
 }

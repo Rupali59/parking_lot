@@ -1,12 +1,12 @@
 package processor
 
 import (
-	parkingLot "../parking_lot"
+	"../parkingLot"
+	ticketingSystem "../ticketing_system"
+	"../vehicle"
 	"errors"
 	"strconv"
 	"strings"
-	vehicle "../vehicle"
-	ticketingSystem "../ticketing_system"
 )
 
 type CommandProcessor struct {
@@ -16,6 +16,7 @@ type CommandProcessor struct {
 var (
 	ErrorInvalidCommand = errors.New("Invalid Command")
 	ErrorInvalidArguments = errors.New("Invalid Number of arguments")
+	ErrorParkingLotNotCreated = errors.New("Parking Lot Not Created")
 )
 
 func (processor *CommandProcessor) Process(commandString string) (output string, err error) {
@@ -26,8 +27,9 @@ func (processor *CommandProcessor) Process(commandString string) (output string,
 	case "create_parking_lot":
 		return processor.CreateParkingLot(args)
 	case "park":
-
+		return processor.ParkCommand(args)
 	case "leave":
+		return processor.LeaveCommand(args)
 	case "status":
 		return processor.GetStatusCommand()
 	case "registration_numbers_for_cars_with_colour":
@@ -49,7 +51,7 @@ func (processor *CommandProcessor) CreateParkingLot(args []string) (output strin
 		if err!=nil{
 			return "", err
 		}
-		parkingLot,err,response := parkingLot.CreateParkingLot(n)
+		parkingLot,response,err := parkingLot.CreateParkingLot(int(n))
 		if err!=nil{
 			return "", err
 		}
@@ -60,6 +62,9 @@ func (processor *CommandProcessor) CreateParkingLot(args []string) (output strin
 }
 
 func (processor *CommandProcessor) ParkCommand(args []string) (output string, err error) {
+	if(processor.TicketingSystem==nil){
+		return "", ErrorParkingLotNotCreated
+	}
 	if(len(args) ==3){
 		registrationNumber := args[1]
 		color := args[2]
@@ -70,6 +75,9 @@ func (processor *CommandProcessor) ParkCommand(args []string) (output string, er
 }
 
 func (processor *CommandProcessor) LeaveCommand(args []string) (output string, err error) {
+	if(processor.TicketingSystem==nil){
+		return "", ErrorParkingLotNotCreated
+	}
 	if(len(args) ==2){
 		slotNumber,err :=strconv.ParseInt(args[1],10,16)
 		if(err != nil){
@@ -81,10 +89,16 @@ func (processor *CommandProcessor) LeaveCommand(args []string) (output string, e
 }
 
 func (processor *CommandProcessor) GetStatusCommand() (output string, err error) {
+	if(processor.TicketingSystem==nil){
+		return "", ErrorParkingLotNotCreated
+	}
 	return processor.TicketingSystem.GetStatus()
 }
 
 func (processor *CommandProcessor) GetRegistrationNumberGivenColorCommand(args []string) (slotNumber string, err error) {
+	if(processor.TicketingSystem==nil){
+		return "", ErrorParkingLotNotCreated
+	}
 	if (len(args) == 2) {
 		color := args[1]
 		return processor.TicketingSystem.GetRegistrationNumberWithColor(color)
@@ -93,6 +107,9 @@ func (processor *CommandProcessor) GetRegistrationNumberGivenColorCommand(args [
 }
 
 func (processor *CommandProcessor) GetSlotsWithRegistrationNumberCommand(args []string) (slotNumber string, err error) {
+	if(processor.TicketingSystem==nil){
+		return "", ErrorParkingLotNotCreated
+	}
 	if (len(args) == 2) {
 		registrationNumber := args[1]
 		return processor.TicketingSystem.GetSlotNumberGivenRegistrationNumber(registrationNumber)
@@ -102,9 +119,12 @@ func (processor *CommandProcessor) GetSlotsWithRegistrationNumberCommand(args []
 
 
 func (processor *CommandProcessor) GetSlotNumbersGivenColor(args []string) (slotNumber string, err error) {
+	if(processor.TicketingSystem==nil){
+		return "", ErrorParkingLotNotCreated
+	}
 	if (len(args) == 2) {
 		color := args[1]
-		return processor.TicketingSystem.GetSlotNumberGivenRegistrationNumber(color)
+		return processor.TicketingSystem.GetSlotsWithColor(color)
 	}
 	return "", ErrorInvalidArguments
 }

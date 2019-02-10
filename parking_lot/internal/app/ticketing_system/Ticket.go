@@ -13,16 +13,16 @@ type Ticket struct {
 }
 
 func NewTicket(slotNumber int, vehicleNumber string, color string) *Ticket {
+	TicketNumber = TicketNumber+1;
 	return &Ticket{
 		TicketNumber: TicketNumber,
 		SlotNumber: slotNumber,
 		VehicleNumber: vehicleNumber,
 		CreatedOn:time.Now(),
 	}
-	TicketNumber = TicketNumber+1;
 }
 
 
-func(ticket *Ticket) delete(){
-	ticket.delete()
+func(ticket *Ticket) Inactivate(){
+	ticket = nil
 }

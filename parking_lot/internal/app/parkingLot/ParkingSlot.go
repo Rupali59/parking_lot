@@ -1,4 +1,4 @@
-package parking_lot
+package parkingLot
 
 import(
 	"errors"
@@ -25,9 +25,9 @@ type ParkingSlot struct {
   	SlotVehicle *vehicle.Vehicle
 }
 
-func NewParkingSlot() *ParkingSlot {
+func NewParkingSlot(slotNumber int) *ParkingSlot {
 	return &ParkingSlot{
-		SlotNumber:0,
+		SlotNumber:slotNumber,
 		Status:NOT_OCCUPIED,
 		SlotVehicle:nil,
 	}

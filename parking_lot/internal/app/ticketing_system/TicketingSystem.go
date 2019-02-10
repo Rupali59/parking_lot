@@ -5,6 +5,7 @@ import (
 	parkinglot "../parking_lot"
 	vehicle "../vehicle"
 	"fmt"
+	"strings"
 )
 
 var (
@@ -16,6 +17,7 @@ var (
 
 var (
 	ResponseSlotAllocatedSuccessfully = "Allocated slot number: %d";
+	ResponseSlotDeallocatedSuccesfully = "Slot number %d is free"
 )
 
 type TicketingSystem struct {
@@ -56,10 +58,10 @@ func (system *TicketingSystem)GenerateTicket(car *vehicle.Vehicle) (response str
 }
 
 
-func (system *TicketingSystem)InvalidateTicket(slotNumber int)(status bool, err error){
-	status,err = system.parkinglot.Leave(slotNumber-1)
+func (system *TicketingSystem)InvalidateTicket(slotNumber int)(response string, err error){
+	_,err = system.parkinglot.Leave(slotNumber-1)
 	if(err !=nil){
-		return false, err
+		return "", err
 	}
 	var tickets []Ticket
 	for _,ticket:= range system.validTickets{
@@ -75,35 +77,51 @@ func (system *TicketingSystem)InvalidateTicket(slotNumber int)(status bool, err 
 		}
 	}
 	system.parkingMap.Entry = validEntry
-	return true, nil
+	return fmt.Sprintf(ResponseSlotDeallocatedSuccesfully, slotNumber-1), nil
 }
 
 
-func (system *TicketingSystem) GetStatus() (*ParkingMap){
-	return system.parkingMap;
+func (system *TicketingSystem) GetStatus() (outputString string, err error){
+	var output []string
+	for _, entry := range system.parkingMap.Entry{
+		output = append(
+			output,
+			fmt.Sprintf(
+				"%-12v%-20v%-10v",
+				entry.SlotNumber,
+				entry.RegistrationNumber,
+				entry.Color,
+			),
+		)
+	}
+	return strings.Join(output, "\n"),nil
 }
 
-func (system TicketingSystem) GetRegistrationNumberWithColor(color string) (registrationNumbers []string, err error) {
+func (system TicketingSystem) GetRegistrationNumberWithColor(color string) (registrationNumbersString string, err error) {
+	var registrationNumbers []string
 	for _,entry := range system.parkingMap.Entry{
 		if(entry.Color== color){
 			registrationNumbers=append(registrationNumbers, entry.RegistrationNumber)
 		}
 	}
-	return registrationNumbers,nil
+	registrationNumbersString = strings.Trim(strings.Replace(fmt.Sprint(registrationNumbers), " ", ", ", -1), "[]")
+	return registrationNumbersString,nil
 }
 
 
-func (system *TicketingSystem) GetSlotsWithColor(color string) (slotNumbers[]int, err error){
+func (system *TicketingSystem) GetSlotsWithColor(color string) (slotNumbersString string, err error){
+	var slotNumbers []int
 	for _,entry := range system.parkingMap.Entry{
 		if(entry.Color == color){
 			slotNumbers= append(slotNumbers, entry.SlotNumber)
 		}
 	}
-	return slotNumbers,nil
+	slotNumbersString = strings.Trim(strings.Replace(fmt.Sprint(slotNumbers), " ", ", ", -1), "[]")
+	return slotNumbersString,nil
 }
 
 
-func (system *TicketingSystem) GetSlotNumberGivenRegistrationNumber(registrationNumber string) (slotNumber int, err error){
+func (system *TicketingSystem) GetSlotNumberGivenRegistrationNumber(registrationNumber string) (slotNumber string, err error){
 	var slotNumbers []int;
 	for _,entry := range system.parkingMap.Entry{
 		if entry.RegistrationNumber== registrationNumber{
@@ -111,9 +129,9 @@ func (system *TicketingSystem) GetSlotNumberGivenRegistrationNumber(registration
 		}
 	}
 	switch len(slotNumbers) {
-	case 0: return -1,ErrorNotFound
-	case 1: return slotNumbers[0],nil
-	default: return -1, ErrorSameRegistrationNumberFound
+	case 0: return "",ErrorNotFound
+	case 1: return string(slotNumbers[0]),nil
+	default: return "", ErrorSameRegistrationNumberFound
 	}
 }
 

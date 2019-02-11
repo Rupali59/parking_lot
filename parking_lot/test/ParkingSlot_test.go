@@ -25,7 +25,6 @@ func TestNewParkingSlot(t *testing.T) {
 				lot.NOT_OCCUPIED,
 				nil,
 			},
-
 		},
 	}
 	for _, tt := range tests {
@@ -112,8 +111,7 @@ func TestParkingSlot_Deallocate(t *testing.T) {
 		fields     fields
 		wantStatus bool
 		wantErr    bool
-	}{
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			slot := &lot.ParkingSlot{

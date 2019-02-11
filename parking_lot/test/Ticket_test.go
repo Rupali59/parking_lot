@@ -1,10 +1,10 @@
 package test
 
 import (
+	system "../internal/app/ticketing_system"
 	"reflect"
 	"testing"
 	"time"
-	system "../internal/app/ticketing_system"
 )
 
 func TestNewTicket(t *testing.T) {

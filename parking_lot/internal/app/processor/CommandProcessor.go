@@ -14,8 +14,8 @@ type CommandProcessor struct {
 }
 
 var (
-	ErrorInvalidCommand = errors.New("Invalid Command")
-	ErrorInvalidArguments = errors.New("Invalid Number of arguments")
+	ErrorInvalidCommand       = errors.New("Invalid Command")
+	ErrorInvalidArguments     = errors.New("Invalid Number of arguments")
 	ErrorParkingLotNotCreated = errors.New("Parking Lot Not Created")
 )
 
@@ -33,7 +33,7 @@ func (processor *CommandProcessor) Process(commandString string) (output string,
 	case "status":
 		return processor.GetStatusCommand()
 	case "registration_numbers_for_cars_with_colour":
-		return  processor.GetRegistrationNumberGivenColorCommand(args)
+		return processor.GetRegistrationNumberGivenColorCommand(args)
 	case "slot_numbers_for_cars_with_colour":
 		return processor.GetSlotNumbersGivenColor(args)
 	case "slot_number_for_registration_number":
@@ -44,62 +44,61 @@ func (processor *CommandProcessor) Process(commandString string) (output string,
 	return "", ErrorInvalidCommand
 }
 
-
 func (processor *CommandProcessor) CreateParkingLot(args []string) (output string, err error) {
-	if(len(args) ==2){
-		n, err := strconv.ParseInt(args[1],10,64)
-		if err!=nil{
+	if len(args) == 2 {
+		n, err := strconv.ParseInt(args[1], 10, 64)
+		if err != nil {
 			return "", err
 		}
-		parkingLot,response,err := parkingLot.CreateParkingLot(int(n))
-		if err!=nil{
+		parkingLot, response, err := parkingLot.CreateParkingLot(int(n))
+		if err != nil {
 			return "", err
 		}
 		processor.TicketingSystem = ticketingSystem.NewTicketingSystem(parkingLot)
-		return response,err
+		return response, err
 	}
-	return "",ErrorInvalidArguments
+	return "", ErrorInvalidArguments
 }
 
 func (processor *CommandProcessor) ParkCommand(args []string) (output string, err error) {
-	if(processor.TicketingSystem==nil){
+	if processor.TicketingSystem == nil {
 		return "", ErrorParkingLotNotCreated
 	}
-	if(len(args) ==3){
+	if len(args) == 3 {
 		registrationNumber := args[1]
 		color := args[2]
-		car := vehicle.GetVehicle("car",registrationNumber,color)
+		car := vehicle.GetVehicle("car", registrationNumber, color)
 		return processor.TicketingSystem.GenerateTicket(car)
 	}
-	return "",ErrorInvalidArguments
+	return "", ErrorInvalidArguments
 }
 
 func (processor *CommandProcessor) LeaveCommand(args []string) (output string, err error) {
-	if(processor.TicketingSystem==nil){
+	if processor.TicketingSystem == nil {
 		return "", ErrorParkingLotNotCreated
 	}
-	if(len(args) ==2){
-		slotNumber,err :=strconv.ParseInt(args[1],10,16)
-		if(err != nil){
+	if len(args) == 2 {
+		slotNumber, err := strconv.ParseInt(args[1], 10, 16)
+		if err != nil {
 			return "", err
 		}
 		return processor.TicketingSystem.InvalidateTicket(int(slotNumber))
 	}
-	return "",ErrorInvalidArguments
+	return "", ErrorInvalidArguments
 }
 
 func (processor *CommandProcessor) GetStatusCommand() (output string, err error) {
-	if(processor.TicketingSystem==nil){
+	if processor.TicketingSystem == nil {
 		return "", ErrorParkingLotNotCreated
 	}
 	return processor.TicketingSystem.GetStatus()
 }
 
 func (processor *CommandProcessor) GetRegistrationNumberGivenColorCommand(args []string) (slotNumber string, err error) {
-	if(processor.TicketingSystem==nil){
+	if processor.TicketingSystem == nil {
 		return "", ErrorParkingLotNotCreated
 	}
-	if (len(args) == 2) {
+	if len(args) == 2 {
 		color := args[1]
 		return processor.TicketingSystem.GetRegistrationNumberWithColor(color)
 	}
@@ -107,22 +106,21 @@ func (processor *CommandProcessor) GetRegistrationNumberGivenColorCommand(args [
 }
 
 func (processor *CommandProcessor) GetSlotsWithRegistrationNumberCommand(args []string) (slotNumber string, err error) {
-	if(processor.TicketingSystem==nil){
+	if processor.TicketingSystem == nil {
 		return "", ErrorParkingLotNotCreated
 	}
-	if (len(args) == 2) {
+	if len(args) == 2 {
 		registrationNumber := args[1]
 		return processor.TicketingSystem.GetSlotNumberGivenRegistrationNumber(registrationNumber)
 	}
 	return "", ErrorInvalidArguments
 }
 
-
 func (processor *CommandProcessor) GetSlotNumbersGivenColor(args []string) (slotNumber string, err error) {
-	if(processor.TicketingSystem==nil){
+	if processor.TicketingSystem == nil {
 		return "", ErrorParkingLotNotCreated
 	}
-	if (len(args) == 2) {
+	if len(args) == 2 {
 		color := args[1]
 		return processor.TicketingSystem.GetSlotsWithColor(color)
 	}

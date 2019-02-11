@@ -1,9 +1,9 @@
 package test
 
 import (
-	"testing"
 	processor "../internal/app/processor"
 	ticketingSystem "../internal/app/ticketing_system"
+	"testing"
 )
 
 func TestCommandProcessor_Process(t *testing.T) {

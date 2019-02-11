@@ -4,15 +4,14 @@ type ParkingMap struct {
 	Entry []ParkingMapEntry
 }
 
-func NewParkingMap() (*ParkingMap) {
+func NewParkingMap() *ParkingMap {
 	return &ParkingMap{
-		Entry:[]ParkingMapEntry{},
+		Entry: []ParkingMapEntry{},
 	}
 }
 
 type ParkingMapEntry struct {
-	SlotNumber int
+	SlotNumber         int
 	RegistrationNumber string
-	Color string
+	Color              string
 }
-

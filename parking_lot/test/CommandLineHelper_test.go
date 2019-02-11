@@ -1,8 +1,8 @@
 package test
 
 import (
-	"testing"
 	helpers "../internal/app/helpers"
+	"testing"
 )
 
 func TestCommandLineHelper_Process(t *testing.T) {

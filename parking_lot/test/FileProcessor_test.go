@@ -1,10 +1,9 @@
 package test
 
 import (
-	"testing"
 	helpers "../internal/app/helpers"
+	"testing"
 )
-
 
 func TestFileProcessor_Process(t *testing.T) {
 	type fields struct {
@@ -18,9 +17,9 @@ func TestFileProcessor_Process(t *testing.T) {
 		{
 			name: "FileTest",
 			fields: fields{
-				FileName:"/home/rupalib/Downloads/parking-lot-1.4.1/parking_lot/cmd/commands.txt",
+				FileName: "/home/rupalib/Downloads/parking-lot-1.4.1/parking_lot/cmd/commands.txt",
 			},
-			wantErr:false,
+			wantErr: false,
 		},
 	}
 	for _, tt := range tests {

@@ -1,9 +1,9 @@
 package test
 
 import (
+	vehicle "../internal/app/vehicle"
 	"reflect"
 	"testing"
-	vehicle "../internal/app/vehicle"
 )
 
 func TestCarFactory_CreateVehicle(t *testing.T) {

@@ -1,12 +1,12 @@
 package test
 
 import (
+	parkinglot "../internal/app/parkingLot"
+	system "../internal/app/ticketing_system"
+	vehicle "../internal/app/vehicle"
 	"fmt"
 	"reflect"
 	"testing"
-	system "../internal/app/ticketing_system"
-	parkinglot "../internal/app/parkingLot"
-	vehicle "../internal/app/vehicle"
 )
 
 func TestNewTicketingSystem(t *testing.T) {
@@ -94,8 +94,8 @@ func TestTicketingSystem_GenerateTicket(t *testing.T) {
 					Color:              "White",
 				},
 			},
-			wantResponse:fmt.Sprintf(system.ResponseSlotAllocatedSuccessfully,1),
-			wantErr:false,
+			wantResponse: fmt.Sprintf(system.ResponseSlotAllocatedSuccessfully, 1),
+			wantErr:      false,
 		},
 	}
 	for _, tt := range tests {

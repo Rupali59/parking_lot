@@ -6,6 +6,8 @@ import (
 	"testing"
 )
 
+/*
+*/
 func TestCarFactory_CreateVehicle(t *testing.T) {
 	type args struct {
 		registrationNumber string
@@ -17,7 +19,19 @@ func TestCarFactory_CreateVehicle(t *testing.T) {
 		args       args
 		want       *vehicle.Vehicle
 	}{
-		// TODO: Add test cases.
+		{
+			name:"Create car",
+			carFactory:&vehicle.CarFactory{},
+			args:args{
+				registrationNumber:"KA-01-HH-3141",
+				color:"White",
+			},
+			want:&vehicle.Vehicle{
+				RegistrationNumber:"KA-01-HH-3141",
+				Color:"White",
+				Type:"Car",
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

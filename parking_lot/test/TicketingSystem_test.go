@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
+	"time"
 )
 
 func TestNewTicketingSystem(t *testing.T) {
@@ -18,7 +19,17 @@ func TestNewTicketingSystem(t *testing.T) {
 		args args
 		want *system.TicketingSystem
 	}{
-		// TODO: Add test cases.
+		{
+			name:"New Ticketing System",
+			args:args{
+				lot:&parkinglot.ParkingLot{},
+			},
+			want:&system.TicketingSystem{
+				ValidTickets:[]system.Ticket{},
+				Parkinglot:&parkinglot.ParkingLot{},
+				ParkingMap:system.NewParkingMap(),
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -133,7 +144,130 @@ func TestTicketingSystem_InvalidateTicket(t *testing.T) {
 		wantResponse string
 		wantErr      bool
 	}{
-		// TODO: Add test cases.
+		{
+			name : "Valid deallocation",
+			fields:fields{
+				[]system.Ticket{
+					{
+						TicketNumber:1,
+						SlotNumber:1,
+						VehicleNumber:"KA-01-HH-1234",
+						Color:"White",
+						CreatedOn:time.Now(),
+					},
+				},
+				&parkinglot.ParkingLot{
+					Slots: []parkinglot.ParkingSlot{
+						{
+							SlotNumber:  0,
+							Status:      parkinglot.OCCUPIED,
+							SlotVehicle: vehicle.GetVehicle("Car", "KA-01-HH-1234", "White"),
+						},
+						{
+							SlotNumber:  1,
+							Status:      parkinglot.NOT_OCCUPIED,
+							SlotVehicle: nil,
+						},
+						{
+							SlotNumber:  2,
+							Status:      parkinglot.NOT_OCCUPIED,
+							SlotVehicle: nil,
+						},
+						{
+							SlotNumber:  3,
+							Status:      parkinglot.NOT_OCCUPIED,
+							SlotVehicle: nil,
+						},
+						{
+							SlotNumber:  4,
+							Status:      parkinglot.NOT_OCCUPIED,
+							SlotVehicle: nil,
+						},
+						{
+							SlotNumber:  5,
+							Status:      parkinglot.NOT_OCCUPIED,
+							SlotVehicle: nil,
+						},
+					},
+					EmptySlots: []int{1, 2, 3, 4, 5},
+					Capacity:   6,
+				},
+				&system.ParkingMap{
+					Entry:[]system.ParkingMapEntry{
+						{
+							SlotNumber:         1,
+							RegistrationNumber: "KA-01-HH-1234",
+							Color:              "White",
+						},
+					},
+				},
+			},
+			args:args{1},
+			wantResponse:fmt.Sprintf(system.ResponseSlotDeallocatedSuccesfully,1),
+			wantErr:false,
+		},
+		{
+			name : "Invalid deallocation",
+			fields:fields{
+				[]system.Ticket{
+					{
+						TicketNumber:1,
+						SlotNumber:1,
+						VehicleNumber:"KA-01-HH-1234",
+						Color:"White",
+						CreatedOn:time.Now(),
+					},
+				},
+				&parkinglot.ParkingLot{
+					Slots: []parkinglot.ParkingSlot{
+						{
+							SlotNumber:  0,
+							Status:      parkinglot.OCCUPIED,
+							SlotVehicle: vehicle.GetVehicle("Car", "KA-01-HH-1234", "White"),
+						},
+						{
+							SlotNumber:  1,
+							Status:      parkinglot.NOT_OCCUPIED,
+							SlotVehicle: nil,
+						},
+						{
+							SlotNumber:  2,
+							Status:      parkinglot.NOT_OCCUPIED,
+							SlotVehicle: nil,
+						},
+						{
+							SlotNumber:  3,
+							Status:      parkinglot.NOT_OCCUPIED,
+							SlotVehicle: nil,
+						},
+						{
+							SlotNumber:  4,
+							Status:      parkinglot.NOT_OCCUPIED,
+							SlotVehicle: nil,
+						},
+						{
+							SlotNumber:  5,
+							Status:      parkinglot.NOT_OCCUPIED,
+							SlotVehicle: nil,
+						},
+					},
+					EmptySlots: []int{1, 2, 3, 4, 5},
+					Capacity:   6,
+				},
+				&system.ParkingMap{
+					Entry:[]system.ParkingMapEntry{
+						{
+							SlotNumber:         1,
+							RegistrationNumber: "KA-01-HH-1234",
+							Color:              "White",
+						},
+					},
+				},
+			},
+			args:args{2},
+			wantResponse: "",
+			wantErr:true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

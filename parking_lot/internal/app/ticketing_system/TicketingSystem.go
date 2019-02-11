@@ -1,3 +1,4 @@
+//Package ticketing_system has the models that define the ticketing system for the parking lot
 package ticketing_system
 
 import (
@@ -22,11 +23,12 @@ var (
 )
 
 type TicketingSystem struct {
-	ValidTickets []Ticket
-	Parkinglot   *parkinglot.ParkingLot
-	ParkingMap   *ParkingMap
+	ValidTickets []Ticket //Holds a list of valid tickets
+	Parkinglot   *parkinglot.ParkingLot //Holds a pointer to the parking lot
+	ParkingMap   *ParkingMap //Holds the hashmap of the parking lot structure
 }
 
+//NewTicketingSystem generates a new ticketing system for the parking lot
 func NewTicketingSystem(lot *parkinglot.ParkingLot) *TicketingSystem {
 	return &TicketingSystem{
 		ValidTickets: []Ticket{},
@@ -35,6 +37,8 @@ func NewTicketingSystem(lot *parkinglot.ParkingLot) *TicketingSystem {
 	}
 }
 
+
+//GenerateTicket generates a ticket when a new vehicle comes into the parking lot
 func (system *TicketingSystem) GenerateTicket(car *vehicle.Vehicle) (response string, err error) {
 	slotNumber := system.Parkinglot.GetEmptySlot()
 	if slotNumber == -1 {
@@ -59,6 +63,7 @@ func (system *TicketingSystem) GenerateTicket(car *vehicle.Vehicle) (response st
 	}
 }
 
+//InvalidateTicket invalidates the ticket and frees up the given slot number
 func (system *TicketingSystem) InvalidateTicket(slotNumber int) (response string, err error) {
 	_, err = system.Parkinglot.Leave(slotNumber - 1)
 	if err != nil {
@@ -83,6 +88,7 @@ func (system *TicketingSystem) InvalidateTicket(slotNumber int) (response string
 	return fmt.Sprintf(ResponseSlotDeallocatedSuccesfully, slotNumber), nil
 }
 
+//GetStatus Gets the current status of the parking lot using the parking map
 func (system *TicketingSystem) GetStatus() (outputString string, err error) {
 	var output []string
 	for _, entry := range system.ParkingMap.Entry {
@@ -99,6 +105,7 @@ func (system *TicketingSystem) GetStatus() (outputString string, err error) {
 	return strings.Join(output, "\n"), nil
 }
 
+//GetRegistrationNumberWithColor gets the registration number of all vehicles with the given color
 func (system TicketingSystem) GetRegistrationNumberWithColor(color string) (registrationNumbersString string, err error) {
 	var registrationNumbers []string
 	for _, entry := range system.ParkingMap.Entry {
@@ -110,6 +117,7 @@ func (system TicketingSystem) GetRegistrationNumberWithColor(color string) (regi
 	return registrationNumbersString, nil
 }
 
+//GetSlotsWithColor gets the slot numbers of all vehicles with the given color
 func (system *TicketingSystem) GetSlotsWithColor(color string) (slotNumbersString string, err error) {
 	var slotNumbers []int
 	for _, entry := range system.ParkingMap.Entry {
@@ -121,6 +129,7 @@ func (system *TicketingSystem) GetSlotsWithColor(color string) (slotNumbersStrin
 	return slotNumbersString, nil
 }
 
+//GetSlotNumberGivenRegistrationNumber gets the slot number where the car having registration number was parked
 func (system *TicketingSystem) GetSlotNumberGivenRegistrationNumber(registrationNumber string) (slotNumber string, err error) {
 	var slotNumbers []int
 	for _, entry := range system.ParkingMap.Entry {

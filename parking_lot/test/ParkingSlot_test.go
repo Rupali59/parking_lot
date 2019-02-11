@@ -47,7 +47,24 @@ func TestParkingSlot_IsOccupied(t *testing.T) {
 		fields fields
 		want   bool
 	}{
-		// TODO: Add test cases.
+	{
+	name:"Unoccupied Case",
+	fields:fields{
+			0,
+			lot.NOT_OCCUPIED,
+			nil,
+	},
+	want:false,
+	},
+		{
+			name:"Occupied Case",
+			fields:fields{
+				0,
+				lot.OCCUPIED,
+				nil,
+			},
+			want:true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -79,7 +96,32 @@ func TestParkingSlot_AllotVehicle(t *testing.T) {
 		wantStatus bool
 		wantErr    bool
 	}{
-		// TODO: Add test cases.
+		{
+			name :"Valid Case",
+			fields:fields{
+				SlotNumber:0,
+				Status:lot.NOT_OCCUPIED,
+				SlotVehicle:nil,
+			},
+			args:args{
+				vehicle:vehicle.GetVehicle("Car","KA-01-HH-1234","White"),
+			},
+			wantStatus:true,
+			wantErr:false,
+		},
+		{
+			name :"Invalid Case",
+			fields:fields{
+				SlotNumber:0,
+				Status:lot.OCCUPIED,
+				SlotVehicle:nil,
+			},
+			args:args{
+				vehicle:vehicle.GetVehicle("Car","KA-01-HH-1234","White"),
+			},
+			wantStatus:false,
+			wantErr:true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -90,7 +132,7 @@ func TestParkingSlot_AllotVehicle(t *testing.T) {
 			}
 			gotStatus, err := slot.AllotVehicle(tt.args.vehicle)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("ParkingSlot.AllotVehicle() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ParkingSlot.AllotVehicle() name=%v error = %v, wantErr %v",tt.name, err, tt.wantErr)
 				return
 			}
 			if gotStatus != tt.wantStatus {
@@ -111,7 +153,28 @@ func TestParkingSlot_Deallocate(t *testing.T) {
 		fields     fields
 		wantStatus bool
 		wantErr    bool
-	}{}
+	}{
+		{
+			name :"Valid Case",
+			fields:fields{
+				SlotNumber:0,
+				Status:lot.OCCUPIED,
+				SlotVehicle:vehicle.GetVehicle("Car","KA-01-HH-1234","White"),
+			},
+			wantStatus:true,
+			wantErr:false,
+		},
+		{
+			name :"Valid Case",
+			fields:fields{
+				SlotNumber:0,
+				Status:lot.NOT_OCCUPIED,
+				SlotVehicle:nil,
+			},
+			wantStatus:true,
+			wantErr:true,
+		},
+	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			slot := &lot.ParkingSlot{

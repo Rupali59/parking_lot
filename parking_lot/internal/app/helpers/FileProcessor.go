@@ -1,3 +1,4 @@
+//Package helper provides helpers to read commands
 package helpers
 
 import (
@@ -7,10 +8,13 @@ import (
 	"os"
 )
 
+//FileProcessor reads a file to get the commands to be executed
 type FileProcessor struct {
-	FileName string
+	FileName string //Note FileName is the fully qualified name of the path where the commands are stored
 }
 
+//Process reads the file given its fully qualified path and executes the commands present in the file and exits
+//after reading the file
 func (fileProcessor *FileProcessor) Process() (err error) {
 	file, err := os.Open(fileProcessor.FileName)
 
@@ -31,6 +35,7 @@ func (fileProcessor *FileProcessor) Process() (err error) {
 		}
 	}
 	if err := reader.Err(); err != nil {
+		os.Exit(1)
 		return err
 	}
 

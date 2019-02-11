@@ -1,3 +1,4 @@
+//Package parkingLot stores the models for the lot and slot
 package parkingLot
 
 import (
@@ -19,11 +20,12 @@ const (
 )
 
 type ParkingSlot struct {
-	SlotNumber  int
-	Status      ParkingSlotStatus
-	SlotVehicle *vehicle.Vehicle
+	SlotNumber  int //SlotNumber represents the distance from entry of the slot
+	Status      ParkingSlotStatus//Status of the slot
+	SlotVehicle *vehicle.Vehicle//Vehicle parked in the slot
 }
 
+//NewParkingSlot creates a new parking slot given its distance from the entry
 func NewParkingSlot(slotNumber int) *ParkingSlot {
 	return &ParkingSlot{
 		SlotNumber:  slotNumber,
@@ -32,10 +34,13 @@ func NewParkingSlot(slotNumber int) *ParkingSlot {
 	}
 }
 
+//IsOccupied checks whether the slot has been occupied
 func (slot *ParkingSlot) IsOccupied() bool {
 	return slot.Status == OCCUPIED
 }
 
+
+//AllotVehicle allots the given vehicle to the slot
 func (slot *ParkingSlot) AllotVehicle(vehicle *vehicle.Vehicle) (status bool, err error) {
 
 	if slot.Status == NOT_OCCUPIED {
@@ -46,6 +51,7 @@ func (slot *ParkingSlot) AllotVehicle(vehicle *vehicle.Vehicle) (status bool, er
 	return false, ErrorSlotOccupied
 }
 
+//Deallocate removes the vehicle from the slot
 func (slot *ParkingSlot) Deallocate() (status bool, err error) {
 	if slot.Status == NOT_OCCUPIED {
 		return true, ErrorSlotNotOccupied

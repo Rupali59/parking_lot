@@ -60,7 +60,7 @@ func TestCommandProcessor_CreateParkingLot(t *testing.T) {
 			processor := &processor.CommandProcessor{
 				TicketingSystem: tt.fields.TicketingSystem,
 			}
-			gotOutput, err := processor.CreateParkingLot(tt.args.args)
+			gotOutput, err := processor.CreateParkingLotCommand(tt.args.args)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("CommandProcessor.CreateParkingLot() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -254,7 +254,7 @@ func TestCommandProcessor_GetSlotNumbersGivenColor(t *testing.T) {
 			processor := &processor.CommandProcessor{
 				TicketingSystem: tt.fields.TicketingSystem,
 			}
-			gotSlotNumber, err := processor.GetSlotNumbersGivenColor(tt.args.args)
+			gotSlotNumber, err := processor.GetSlotNumbersGivenColorCommand(tt.args.args)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("CommandProcessor.GetSlotNumbersGivenColor() error = %v, wantErr %v", err, tt.wantErr)
 				return

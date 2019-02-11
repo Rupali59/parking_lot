@@ -1,3 +1,4 @@
+//Package helper provides helpers to read commands
 package helpers
 
 import (
@@ -7,9 +8,11 @@ import (
 	"os"
 )
 
+//CommandLineHelper helps reading the commands from the console
 type CommandLineHelper struct {
 }
 
+//Process the command sent on the console. As soon as exit gets called, exits the program
 func (helper *CommandLineHelper) Process() (err error) {
 	reader := bufio.NewReader(os.Stdin)
 	processor := commandProcessor.CommandProcessor{}

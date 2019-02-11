@@ -1,3 +1,4 @@
+//Package parkingLot stores the models for the lot and slot
 package parkingLot
 
 import (
@@ -12,12 +13,15 @@ var (
 	ResponseCreatedparkingLot = "Created a parking lot with %d slots."
 )
 
+
 type ParkingLot struct {
-	Slots      []ParkingSlot
-	EmptySlots []int
-	Capacity   int
+	Slots      []ParkingSlot //Slots are all the valid slots present in the parking lot
+	EmptySlots []int //EmptySlots is a list of empty parking slots present in the parking lot
+	Capacity   int //Capacity is the max capacity of the parking lot
 }
 
+//CreateParkingLot creates a parking lot given the number of slots present in the lot
+//The distance of the slot from the entry is put in the slotNumber
 func CreateParkingLot(n int) (parkingLot *ParkingLot, response string, err error) {
 	var slots []ParkingSlot
 	var slotNumbers []int
@@ -38,6 +42,7 @@ func CreateParkingLot(n int) (parkingLot *ParkingLot, response string, err error
 	}
 }
 
+//GetEmptySlot Get the closest unoccupied slot in the parking lot
 func (parkingLot *ParkingLot) GetEmptySlot() (slotNumber int) {
 	if len(parkingLot.EmptySlots) > 0 {
 		min := parkingLot.Capacity + 1
@@ -51,6 +56,7 @@ func (parkingLot *ParkingLot) GetEmptySlot() (slotNumber int) {
 	return -1
 }
 
+//Leave removes the car from the given slotNumber
 func (parkingLot *ParkingLot) Leave(slotNumber int) (status bool, err error) {
 	for _, slot := range parkingLot.Slots {
 		if slot.SlotNumber == slotNumber {
@@ -68,6 +74,7 @@ func (parkingLot *ParkingLot) Leave(slotNumber int) (status bool, err error) {
 	return false, errors.New(fmt.Sprintf(ResponseSlotNotFound, slotNumber))
 }
 
+//Park parks the car at the given slot number
 func (parkingLot *ParkingLot) Park(slotNumber int, vehicle *vehicle.Vehicle) (status bool, err error) {
 	slot := parkingLot.Slots[slotNumber]
 	allotStatus, err := slot.AllotVehicle(vehicle)

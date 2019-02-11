@@ -1,3 +1,4 @@
+//package processor has the processor which handles the commands
 package processor
 
 import (
@@ -10,7 +11,7 @@ import (
 )
 
 type CommandProcessor struct {
-	TicketingSystem *ticketingSystem.TicketingSystem
+	TicketingSystem *ticketingSystem.TicketingSystem //Has an instance of the ticketing system
 }
 
 var (
@@ -19,13 +20,15 @@ var (
 	ErrorParkingLotNotCreated = errors.New("Parking Lot Not Created")
 )
 
+
+//Process processes the command passed to it
 func (processor *CommandProcessor) Process(commandString string) (output string, err error) {
 	args := strings.Split(commandString, " ")
 
 	command := args[0]
 	switch command {
 	case "create_parking_lot":
-		return processor.CreateParkingLot(args)
+		return processor.CreateParkingLotCommand(args)
 	case "park":
 		return processor.ParkCommand(args)
 	case "leave":
@@ -35,7 +38,7 @@ func (processor *CommandProcessor) Process(commandString string) (output string,
 	case "registration_numbers_for_cars_with_colour":
 		return processor.GetRegistrationNumberGivenColorCommand(args)
 	case "slot_numbers_for_cars_with_colour":
-		return processor.GetSlotNumbersGivenColor(args)
+		return processor.GetSlotNumbersGivenColorCommand(args)
 	case "slot_number_for_registration_number":
 		return processor.GetSlotsWithRegistrationNumberCommand(args)
 	default:
@@ -44,7 +47,8 @@ func (processor *CommandProcessor) Process(commandString string) (output string,
 	return "", ErrorInvalidCommand
 }
 
-func (processor *CommandProcessor) CreateParkingLot(args []string) (output string, err error) {
+//CreateParkingLotCommand processes the create parking command
+func (processor *CommandProcessor) CreateParkingLotCommand(args []string) (output string, err error) {
 	if len(args) == 2 {
 		n, err := strconv.ParseInt(args[1], 10, 64)
 		if err != nil {
@@ -60,6 +64,7 @@ func (processor *CommandProcessor) CreateParkingLot(args []string) (output strin
 	return "", ErrorInvalidArguments
 }
 
+//ParkCommand creates the vehicle that is supposed to be parked
 func (processor *CommandProcessor) ParkCommand(args []string) (output string, err error) {
 	if processor.TicketingSystem == nil {
 		return "", ErrorParkingLotNotCreated
@@ -73,6 +78,7 @@ func (processor *CommandProcessor) ParkCommand(args []string) (output string, er
 	return "", ErrorInvalidArguments
 }
 
+//LeaveCommand empties out the slot given the slot number
 func (processor *CommandProcessor) LeaveCommand(args []string) (output string, err error) {
 	if processor.TicketingSystem == nil {
 		return "", ErrorParkingLotNotCreated
@@ -87,6 +93,7 @@ func (processor *CommandProcessor) LeaveCommand(args []string) (output string, e
 	return "", ErrorInvalidArguments
 }
 
+//GetStatusCommand gets the current status of the parking lot
 func (processor *CommandProcessor) GetStatusCommand() (output string, err error) {
 	if processor.TicketingSystem == nil {
 		return "", ErrorParkingLotNotCreated
@@ -94,6 +101,7 @@ func (processor *CommandProcessor) GetStatusCommand() (output string, err error)
 	return processor.TicketingSystem.GetStatus()
 }
 
+//GetRegistrationNumberGivenColorCommand gets the registration number of all the cars currently parked in the lot with the given color
 func (processor *CommandProcessor) GetRegistrationNumberGivenColorCommand(args []string) (slotNumber string, err error) {
 	if processor.TicketingSystem == nil {
 		return "", ErrorParkingLotNotCreated
@@ -105,6 +113,7 @@ func (processor *CommandProcessor) GetRegistrationNumberGivenColorCommand(args [
 	return "", ErrorInvalidArguments
 }
 
+//GetSlotsWithRegistrationNumberCommand gets the slot number where the car with the given registration number is parked
 func (processor *CommandProcessor) GetSlotsWithRegistrationNumberCommand(args []string) (slotNumber string, err error) {
 	if processor.TicketingSystem == nil {
 		return "", ErrorParkingLotNotCreated
@@ -116,7 +125,8 @@ func (processor *CommandProcessor) GetSlotsWithRegistrationNumberCommand(args []
 	return "", ErrorInvalidArguments
 }
 
-func (processor *CommandProcessor) GetSlotNumbersGivenColor(args []string) (slotNumber string, err error) {
+//GetSlotNumbersGivenColorCommand gets all the slots where the vehicle having the color is parked
+func (processor *CommandProcessor) GetSlotNumbersGivenColorCommand(args []string) (slotNumber string, err error) {
 	if processor.TicketingSystem == nil {
 		return "", ErrorParkingLotNotCreated
 	}

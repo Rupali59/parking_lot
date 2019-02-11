@@ -58,7 +58,6 @@ func TestCreateParkingLot(t *testing.T) {
 					},
 				},
 				EmptySlots: []int{0, 1, 2, 3, 4, 5},
-
 				Capacity: 6,
 			},
 			wantResponse: fmt.Sprintf(lot.ResponseCreatedparkingLot, 6),
@@ -244,7 +243,106 @@ func TestParkingLot_Leave(t *testing.T) {
 		wantStatus bool
 		wantErr    bool
 	}{
-		// TODO: Add test cases.
+		{
+			name : "Leave Valid Case",
+			fields:fields{
+				Slots: []lot.ParkingSlot{
+					{
+						SlotNumber:  0,
+						Status:      lot.OCCUPIED,
+						SlotVehicle: &vehicle.Vehicle{
+							"KA-01-HH-1234",
+							"White",
+							"Car",
+						},
+					},
+					{
+						SlotNumber:  1,
+						Status:      lot.OCCUPIED,
+						SlotVehicle: &vehicle.Vehicle{
+							"KA-01-HH-9999",
+							"White",
+							"Car",
+						},
+					},
+					{
+						SlotNumber:  2,
+						Status:      lot.OCCUPIED,
+						SlotVehicle: &vehicle.Vehicle{
+							"KA-01-BB-0001",
+							"Black",
+							"Car",
+						},
+					},
+					{
+						SlotNumber:  3,
+						Status:      lot.NOT_OCCUPIED,
+						SlotVehicle: nil,
+					},
+					{
+						SlotNumber:  4,
+						Status:      lot.NOT_OCCUPIED,
+						SlotVehicle: nil,
+					},
+					{
+						SlotNumber:  5,
+						Status:      lot.NOT_OCCUPIED,
+						SlotVehicle: nil,
+					},
+				},
+				EmptySlots: []int{3, 4, 5},
+				Capacity: 6,
+			},
+			args:args{
+				slotNumber: 2,
+			},
+			wantStatus: true,
+			wantErr:false,
+		},
+		{
+			name : "Leave InValid Case",
+			fields:fields{
+				Slots: []lot.ParkingSlot{
+					{
+						SlotNumber:  0,
+						Status:      lot.NOT_OCCUPIED,
+						SlotVehicle: nil,
+					},
+					{
+						SlotNumber:  1,
+						Status:      lot.NOT_OCCUPIED,
+						SlotVehicle: nil,
+					},
+					{
+						SlotNumber:  2,
+						Status:      lot.NOT_OCCUPIED,
+						SlotVehicle: nil,
+					},
+					{
+						SlotNumber:  3,
+						Status:      lot.NOT_OCCUPIED,
+						SlotVehicle: nil,
+					},
+					{
+						SlotNumber:  4,
+						Status:      lot.NOT_OCCUPIED,
+						SlotVehicle: nil,
+					},
+					{
+						SlotNumber:  5,
+						Status:      lot.NOT_OCCUPIED,
+						SlotVehicle: nil,
+					},
+				},
+				EmptySlots: []int{3, 4, 5},
+				Capacity: 6,
+			},
+			args:args{
+				slotNumber: 4,
+			},
+			wantStatus: false,
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -255,7 +353,7 @@ func TestParkingLot_Leave(t *testing.T) {
 			}
 			gotStatus, err := parkingLot.Leave(tt.args.slotNumber)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("ParkingLot.Leave() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ParkingLot.Leave() name =%v error = %v, wantErr %v",tt.name, err, tt.wantErr)
 				return
 			}
 			if gotStatus != tt.wantStatus {

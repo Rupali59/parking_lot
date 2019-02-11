@@ -17,7 +17,28 @@ func TestGetVehicle(t *testing.T) {
 		args args
 		want *vehicle.Vehicle
 	}{
-		// TODO: Add test cases.
+		{
+			name:"Create Car",
+			args:args{
+				"car",
+				"KA-01-HH-1234",
+				"White",
+			},
+			want:&vehicle.Vehicle{
+				Type:"Car",
+				RegistrationNumber:"KA-01-HH-1234",
+				Color:"White",
+			},
+		},
+		{
+			name:"Create Truck",
+			args:args{
+				"truck",
+				"KA-01-HH-1234",
+				"White",
+			},
+			want:nil,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
